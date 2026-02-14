@@ -11,6 +11,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/games/{gameId}")
+@CrossOrigin(origins = "http://localhost:5173")
 public class GameController {
     private final Map<String, GameAdapter> adapters;
     private final RestClient restClient;
