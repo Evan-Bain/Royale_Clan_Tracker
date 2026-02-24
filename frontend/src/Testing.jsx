@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import axios from 'axios'
 
 export default function Testing() {
-    const [members, setMembers] = useState(null)
+    const [members, setMembers] = useState([])
     const [error, setError] = useState(null)
 
     useEffect(() => {
