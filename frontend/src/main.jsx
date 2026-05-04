@@ -4,10 +4,8 @@ import './index.css'
 import App from './App.jsx'
 import { BrowserRouter } from "react-router-dom";
 import CssBaseline from '@mui/material/CssBaseline';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
 import customTheme from './theme/customTheme.js'
-
-const theme = createTheme();
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
