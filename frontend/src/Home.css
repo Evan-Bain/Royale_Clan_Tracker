@@ -27,6 +27,12 @@ footer {
   flex-shrink: 0;
 }
 
+.topActions {
+  display: grid;
+  gap: 12px;
+  justify-items: end;
+}
+
 .topBar h1 {
   margin: 0;
   font-size: clamp(30px, 4vw, 46px);
@@ -72,6 +78,93 @@ footer {
 .searchBox button:disabled {
   cursor: wait;
   opacity: 0.72;
+}
+
+.authPanel {
+  width: min(100%, 420px);
+  background: rgba(22, 39, 86, 0.96);
+  border: 3px solid #8db7ff;
+  border-radius: 18px;
+  padding: 10px;
+  box-shadow: 0 8px 0 #081127;
+}
+
+.authForm {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.authMode {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.authPanel input,
+.authPanel button {
+  min-width: 0;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-family: inherit;
+}
+
+.authPanel input {
+  background: #ffffff;
+  color: #081127;
+}
+
+.authPanel button {
+  background: #203a80;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.authPanel button.active,
+.authPanel button[type="submit"],
+.signedInPanel button {
+  background: #f6b437;
+  color: #3b2108;
+}
+
+.authPanel button:disabled {
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
+.authForm > button[type="submit"] {
+  grid-column: 1 / -1;
+}
+
+.authPanel p {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #fff0bf;
+  font-size: 12px;
+}
+
+.authError {
+  color: #ffb6b6 !important;
+}
+
+.signedInPanel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.signedInPanel span,
+.signedInPanel strong {
+  display: block;
+}
+
+.signedInPanel span {
+  color: #bdd1ff;
+  font-size: 12px;
 }
 
 .dashboard {
@@ -260,6 +353,34 @@ footer {
   font-weight: 700;
 }
 
+.claimedText {
+  margin: 8px 0 0;
+  color: #80ffb0;
+  font-size: 13px;
+}
+
+.clanActions {
+  display: grid;
+  gap: 10px;
+  justify-items: end;
+}
+
+.claimButton {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 16px;
+  background: #f6b437;
+  color: #3b2108;
+  font-family: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.claimButton:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
 .summaryGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -308,12 +429,17 @@ footer {
 }
 
 .healthPanel,
-.attentionPanel {
+.attentionPanel,
+.historyPanel {
   min-width: 0;
   padding: 18px;
   background: #203a80;
   border: 3px solid #8db7ff;
   border-radius: 22px;
+}
+
+.historyPanel {
+  margin-top: clamp(16px, 2vw, 24px);
 }
 
 .panelHeader {
@@ -375,7 +501,8 @@ footer {
   margin-top: 14px;
 }
 
-.attentionRow {
+.attentionRow,
+.snapshotRow {
   display: grid;
   gap: 2px;
   padding: 10px 12px;
@@ -383,13 +510,31 @@ footer {
   background: rgba(19, 38, 87, 0.78);
 }
 
-.attentionRow strong {
+.attentionRow strong,
+.snapshotRow strong {
   color: #ffffff;
 }
 
-.attentionRow span {
+.attentionRow span,
+.snapshotRow span {
   color: #bdd1ff;
   font-size: 12px;
+}
+
+.claimMessage {
+  margin: 12px 0 0;
+  color: #80ffb0;
+}
+
+.snapshotButton {
+  width: fit-content;
+  margin-top: 12px;
+}
+
+.snapshotList {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
 }
 
 .chartGrid {
@@ -484,6 +629,12 @@ footer {
     box-sizing: border-box;
   }
 
+  .topActions,
+  .authPanel {
+    width: 100%;
+    justify-items: stretch;
+  }
+
   .searchBox input {
     flex: 1;
     width: 100%;
@@ -510,6 +661,19 @@ footer {
 
   .searchBox {
     flex-direction: column;
+  }
+
+  .authForm {
+    grid-template-columns: 1fr;
+  }
+
+  .clanActions {
+    width: 100%;
+    justify-items: stretch;
+  }
+
+  .snapshotButton {
+    width: 100%;
   }
 
   .searchBox button {

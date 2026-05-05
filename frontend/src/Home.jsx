@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import {
   Bar,
@@ -9,11 +9,13 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import AuthPanel from "./AuthPanel.jsx";
+import { useAuth } from "./auth/useAuth.js";
 import "./Home.css";
 
-const API_BASE_URL = "http://localhost:8080/api/games/clash-royale";
+const APP_API_BASE_URL = "http://localhost:8080/api";
+const API_BASE_URL = `${APP_API_BASE_URL}/games/clash-royale`;
 const NUMBER_FORMAT = new Intl.NumberFormat("en-US");
-
 const CHART_METRICS = [
   { key: "participationScore", title: "Top Participation Score", color: "#ffd15c" },
   { key: "donations", title: "Top Donations", color: "#80ffb0" },
@@ -72,18 +74,31 @@ function formatClanType(type) {
     .join(" ");
 }
 
+function formatDateTime(value) {
+  if (!value) {
+    return "--";
+  }
+
+  return new Date(value).toLocaleString([], {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
 function getRequestErrorMessage(error) {
   if (axios.isAxiosError(error)) {
     if (error.response) {
-      return `River race request failed: ${error.response.status}`;
+      return error.response.data?.message ?? `Request failed: ${error.response.status}`;
     }
 
     if (error.request) {
-      return "River race request failed: no response";
+      return "Request failed: no response";
     }
   }
 
-  return error instanceof Error ? error.message : "Unknown river race error";
+  return error instanceof Error ? error.message : "Unknown request error";
 }
 
 function getActivityProfile(member) {
@@ -304,11 +319,18 @@ function ChartTooltip({ active, payload, label }) {
 }
 
 export default function Home() {
+  const { getIdToken, user } = useAuth();
   const [clanTag, setClanTag] = useState("R2L0YPGL");
   const [clan, setClan] = useState(null);
   const [members, setMembers] = useState([]);
   const [riverRace, setRiverRace] = useState(null);
   const [riverRaceError, setRiverRaceError] = useState("");
+  const [claimedClan, setClaimedClan] = useState(null);
+  const [claimLoading, setClaimLoading] = useState(false);
+  const [claimMessage, setClaimMessage] = useState("");
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [snapshotLoading, setSnapshotLoading] = useState(false);
+  const [snapshots, setSnapshots] = useState([]);
   const [sortMetric, setSortMetric] = useState("participationScore");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -340,14 +362,40 @@ export default function Home() {
     [rankedMembers]
   );
 
-  async function searchClan() {
+  const getAuthHeaders = useCallback(async () => {
+    const idToken = await getIdToken();
+    return idToken ? { Authorization: `Bearer ${idToken}` } : {};
+  }, [getIdToken]);
+
+  const loadSnapshots = useCallback(async () => {
+    if (!user) {
+      setSnapshots([]);
+      return;
+    }
+
+    try {
+      setHistoryLoading(true);
+      const headers = await getAuthHeaders();
+      const response = await axios.get(`${APP_API_BASE_URL}/me/claimed-clan/snapshots`, {
+        headers,
+      });
+
+      setSnapshots(response.data ?? []);
+    } catch {
+      setSnapshots([]);
+    } finally {
+      setHistoryLoading(false);
+    }
+  }, [getAuthHeaders, user]);
+
+  const searchClan = useCallback(async (targetClanTag) => {
     try {
       setLoading(true);
       setError("");
       setRiverRace(null);
       setRiverRaceError("");
 
-      const cleanTag = normalizeTag(clanTag);
+      const cleanTag = normalizeTag(targetClanTag);
 
       const riverRaceRequest = axios
         .get(`${API_BASE_URL}/group/current-river-race`, { params: { groupId: cleanTag } })
@@ -420,6 +468,97 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  useEffect(() => {
+    let isCurrent = true;
+
+    async function loadClaimedClan() {
+      if (!user) {
+        setClaimedClan(null);
+        setSnapshots([]);
+        setClaimMessage("");
+        return;
+      }
+
+      try {
+        const headers = await getAuthHeaders();
+        const response = await axios.get(`${APP_API_BASE_URL}/me/claimed-clan`, { headers });
+
+        if (!isCurrent) {
+          return;
+        }
+
+        const nextClaimedClan = response.data?.clanTag ? response.data : null;
+        setClaimedClan(nextClaimedClan);
+
+        if (nextClaimedClan?.clanTag) {
+          setClanTag(nextClaimedClan.clanTag);
+          await searchClan(nextClaimedClan.clanTag);
+          await loadSnapshots();
+        }
+      } catch {
+        if (isCurrent) {
+          setClaimedClan(null);
+          setSnapshots([]);
+        }
+      }
+    }
+
+    loadClaimedClan();
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [getAuthHeaders, loadSnapshots, searchClan, user]);
+
+  async function claimCurrentClan() {
+    if (!user || !clan) {
+      return;
+    }
+
+    try {
+      setClaimLoading(true);
+      setClaimMessage("");
+      const headers = await getAuthHeaders();
+      const response = await axios.put(
+        `${APP_API_BASE_URL}/me/claimed-clan`,
+        { gameId: "clash-royale", clanTag: normalizeTag(clan.tag ?? clanTag) },
+        { headers }
+      );
+
+      setClaimedClan(response.data);
+      setClaimMessage(`${response.data.clanName} is now your default clan.`);
+      await loadSnapshots();
+    } catch (claimError) {
+      setClaimMessage(getRequestErrorMessage(claimError));
+    } finally {
+      setClaimLoading(false);
+    }
+  }
+
+  async function saveSnapshot() {
+    if (!user || !claimedClan) {
+      return;
+    }
+
+    try {
+      setSnapshotLoading(true);
+      setClaimMessage("");
+      const headers = await getAuthHeaders();
+      const response = await axios.post(
+        `${APP_API_BASE_URL}/me/claimed-clan/snapshots`,
+        null,
+        { headers }
+      );
+
+      setSnapshots((currentSnapshots) => [response.data, ...currentSnapshots]);
+      setClaimMessage("Clan snapshot saved.");
+    } catch (snapshotError) {
+      setClaimMessage(getRequestErrorMessage(snapshotError));
+    } finally {
+      setSnapshotLoading(false);
+    }
   }
 
   return (
@@ -430,22 +569,26 @@ export default function Home() {
           <p>Search clans, view members, and track clan activity.</p>
         </div>
 
-        <form
-          className="searchBox"
-          onSubmit={(event) => {
-            event.preventDefault();
-            searchClan();
-          }}
-        >
-          <input
-            value={clanTag}
-            onChange={(e) => setClanTag(e.target.value)}
-            placeholder="Enter clan tag"
-          />
-          <button type="submit" disabled={loading}>
-            {loading ? "Searching..." : "Search Clan"}
-          </button>
-        </form>
+        <div className="topActions">
+          <AuthPanel />
+
+          <form
+            className="searchBox"
+            onSubmit={(event) => {
+              event.preventDefault();
+              searchClan(clanTag);
+            }}
+          >
+            <input
+              value={clanTag}
+              onChange={(e) => setClanTag(e.target.value)}
+              placeholder="Enter clan tag"
+            />
+            <button type="submit" disabled={loading}>
+              {loading ? "Searching..." : "Search Clan"}
+            </button>
+          </form>
+        </div>
       </header>
 
       {error && <div className="errorBox">{error}</div>}
@@ -512,9 +655,26 @@ export default function Home() {
             <div>
               <p className="label">Clan Name</p>
               <h2>{clan ? clan.name : "No Clan Selected"}</h2>
+              {claimedClan && (
+                <p className="claimedText">
+                  Default clan: {claimedClan.clanName} ({claimedClan.clanTag})
+                </p>
+              )}
             </div>
-            <div className="badge">
-              {clan ? `${NUMBER_FORMAT.format(clan.members)} Members` : "0 Members"}
+            <div className="clanActions">
+              <div className="badge">
+                {clan ? `${NUMBER_FORMAT.format(clan.members)} Members` : "0 Members"}
+              </div>
+              {user && clan && (
+                <button
+                  type="button"
+                  className="claimButton"
+                  onClick={claimCurrentClan}
+                  disabled={claimLoading}
+                >
+                  {claimLoading ? "Saving..." : "Claim Clan"}
+                </button>
+              )}
             </div>
           </div>
 
@@ -574,6 +734,48 @@ export default function Home() {
               )}
             </section>
           </div>
+
+          {user && (
+            <section className="historyPanel">
+              <div className="panelHeader">
+                <h3>Saved Clan History</h3>
+                <span>{snapshots.length}</span>
+              </div>
+
+              {claimMessage && <p className="claimMessage">{claimMessage}</p>}
+              {claimedClan && (
+                <button
+                  type="button"
+                  className="claimButton snapshotButton"
+                  onClick={saveSnapshot}
+                  disabled={snapshotLoading}
+                >
+                  {snapshotLoading ? "Saving..." : "Save Snapshot"}
+                </button>
+              )}
+
+              {historyLoading ? (
+                <p className="emptyText">Loading saved history...</p>
+              ) : !claimedClan ? (
+                <p className="emptyText">Claim a loaded clan to start saving history.</p>
+              ) : snapshots.length === 0 ? (
+                <p className="emptyText">No saved snapshots yet.</p>
+              ) : (
+                <div className="snapshotList">
+                  {snapshots.slice(0, 5).map((snapshot) => (
+                    <div className="snapshotRow" key={snapshot.id}>
+                      <strong>{formatDateTime(snapshot.capturedAtMillis)}</strong>
+                      <span>
+                        {formatStat(snapshot.clanScore)} score,{" "}
+                        {formatStat(snapshot.clanWarTrophies)} war trophies,{" "}
+                        {formatStat(snapshot.memberCount)} members
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
 
           <div className="chartGrid">
             {CHART_METRICS.map((metric) => {
