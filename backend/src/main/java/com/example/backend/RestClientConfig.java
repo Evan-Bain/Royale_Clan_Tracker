@@ -13,9 +13,15 @@ public class RestClientConfig {
     public RestClient clashRoyaleRestClient(
             @Value("${clash.api.key}") String apiKey
     ) {
+        if (apiKey == null || apiKey.isBlank()) {
+            throw new IllegalStateException(
+                    "CLASH_API_KEY is missing. Set it to a valid Clash Royale API token without the Bearer prefix."
+            );
+        }
+
         return RestClient.builder()
                 .baseUrl("https://api.clashroyale.com/v1")
-                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)
+                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey.trim())
                 .build();
     }
 }
