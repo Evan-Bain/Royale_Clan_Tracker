@@ -7,5 +7,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record ClashClanMember(
         @JsonProperty("tag") String tag,
-        String name
+        String name,
+        String role,
+        int expLevel,
+        int trophies,
+        int clanRank,
+        int previousClanRank,
+        int donations,
+        int donationsReceived
 ) implements MemberDto {}

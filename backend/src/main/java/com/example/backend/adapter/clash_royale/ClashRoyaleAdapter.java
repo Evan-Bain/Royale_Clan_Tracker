@@ -2,6 +2,7 @@ package com.example.backend.adapter.clash_royale;
 
 import com.example.backend.adapter.clash_royale.dto.ClashClanMembersResponse;
 import com.example.backend.adapter.clash_royale.dto.ClashClanResponse;
+import com.example.backend.adapter.clash_royale.dto.ClashCurrentRiverRaceResponse;
 import com.example.backend.model.dto.GroupDto;
 import com.example.backend.model.dto.MembersDto;
 import com.example.backend.adapter.GameAdapter;
@@ -30,5 +31,12 @@ public class ClashRoyaleAdapter implements GameAdapter {
                 .get().uri("/clans/{tag}/members", "#" + groupId)
                 .retrieve()
                 .body(ClashClanMembersResponse.class);
+    }
+
+    public ClashCurrentRiverRaceResponse getCurrentRiverRace(String groupId) {
+        return restClient
+                .get().uri("/clans/{tag}/currentriverrace", "#" + groupId)
+                .retrieve()
+                .body(ClashCurrentRiverRaceResponse.class);
     }
 }
