@@ -1,7 +1,9 @@
 package com.example.backend;
 
 import com.example.backend.adapter.GameAdapter;
+import com.example.backend.adapter.clash_royale.ClashRoyaleAdapter;
 import com.example.backend.adapter.clash_royale.dto.ClashClanMembersResponse;
+import com.example.backend.adapter.clash_royale.dto.ClashCurrentRiverRaceResponse;
 import com.example.backend.model.dto.GroupDto;
 import com.example.backend.model.dto.MembersDto;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +37,15 @@ public class GameController {
             @RequestParam String groupId
     ) {
         return adapters.get(gameId).getMembers(groupId);
+    }
+
+    @GetMapping("/group/current-river-race")
+    public ClashCurrentRiverRaceResponse getCurrentRiverRace(
+            @PathVariable String gameId,
+            @RequestParam String groupId
+    ) {
+        ClashRoyaleAdapter adapter = (ClashRoyaleAdapter) adapters.get(gameId);
+        return adapter.getCurrentRiverRace(groupId);
     }
 
     @GetMapping("/testing")

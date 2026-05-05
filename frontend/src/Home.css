@@ -69,6 +69,11 @@ footer {
   cursor: pointer;
 }
 
+.searchBox button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
 .dashboard {
   flex: 1;
   min-height: 0;
@@ -119,27 +124,76 @@ footer {
 
 .memberRow {
   display: grid;
-  grid-template-columns: 36px 1fr;
-  gap: 8px;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  gap: 8px 12px;
   background: #223f88;
   border: 2px solid #8db7ff;
   border-radius: 14px;
   padding: 10px;
   text-align: left;
+  align-items: center;
 }
 
 .rank {
   background: #ffd15c;
   color: #3b2108;
   border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
   text-align: center;
   font-weight: 700;
 }
 
+.memberIdentity {
+  min-width: 0;
+}
+
+.memberIdentity strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .tag {
-  grid-column: 2;
+  display: block;
+  margin-top: 2px;
   font-size: 12px;
   color: #c8d8ff;
+}
+
+.memberScore {
+  color: #ffd15c;
+  text-align: right;
+}
+
+.memberScore strong,
+.memberScore span {
+  display: block;
+}
+
+.memberScore span {
+  color: #bdd1ff;
+  font-size: 11px;
+}
+
+.memberMeta,
+.memberStats {
+  grid-column: 2 / 4;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  color: #dbe7ff;
+  font-size: 12px;
+}
+
+.memberMeta span,
+.memberStats span {
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(19, 38, 87, 0.78);
 }
 
 .clanHeader {
@@ -159,42 +213,94 @@ footer {
   font-weight: 700;
 }
 
-.statPanel {
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
   margin-top: clamp(16px, 2vw, 24px);
+  flex-shrink: 0;
+}
+
+.summaryGrid div {
+  padding: 14px;
+  background: #203a80;
+  border: 2px solid #8db7ff;
+  border-radius: 18px;
+}
+
+.summaryGrid span,
+.summaryGrid strong {
+  display: block;
+}
+
+.summaryGrid span {
+  color: #bdd1ff;
+  font-size: 13px;
+}
+
+.summaryGrid strong {
+  margin-top: 6px;
+  color: #ffd15c;
+  font-size: clamp(18px, 2vw, 24px);
+}
+
+.chartGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: clamp(16px, 2vw, 24px);
+  margin-top: clamp(16px, 2vw, 24px);
+}
+
+.statPanel {
   background: #203a80;
   border: 3px solid #8db7ff;
   border-radius: 22px;
   padding: 18px;
   display: flex;
-  flex: 1;
   flex-direction: column;
-  min-height: 180px;
+  min-height: 260px;
 }
 
 .statPanel h3 {
-  margin-top: 0;
+  margin: 0;
   color: #ffffff;
 }
 
-.fakeGraph {
-  width: 100%;
-  flex: 1;
-  min-height: 120px;
-  border-radius: 18px;
-  background:
-    linear-gradient(135deg, transparent 48%, #ffd15c 49%, #ffd15c 52%, transparent 53%),
-    linear-gradient(45deg, transparent 48%, #ff6b6b 49%, #ff6b6b 52%, transparent 53%),
-    #132657;
-  background-size: 90px 90px;
-  border: 2px solid #ffd15c;
+.chartPanel {
+  min-width: 0;
 }
 
-.donationGraph {
-  background:
-    linear-gradient(135deg, transparent 48%, #80ffb0 49%, #80ffb0 52%, transparent 53%),
-    linear-gradient(45deg, transparent 48%, #ffd15c 49%, #ffd15c 52%, transparent 53%),
-    #132657;
-  background-size: 75px 75px;
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.chartHeader span {
+  color: #ffd15c;
+  font-size: 12px;
+}
+
+.chartFrame {
+  width: 100%;
+  height: clamp(210px, 24vh, 280px);
+  min-height: 210px;
+}
+
+.chartTooltip {
+  display: grid;
+  gap: 4px;
+  padding: 8px 10px;
+  background: #081127;
+  border: 2px solid #8db7ff;
+  border-radius: 10px;
+  color: white;
+}
+
+.chartTooltip span {
+  color: #ffd15c;
 }
 
 .errorBox {
@@ -257,5 +363,20 @@ footer {
   .searchBox button {
     width: 100%;
     margin-left: 0;
+  }
+
+  .summaryGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .memberRow {
+    grid-template-columns: 30px minmax(0, 1fr);
+  }
+
+  .memberScore,
+  .memberMeta,
+  .memberStats {
+    grid-column: 2;
+    text-align: left;
   }
 }
