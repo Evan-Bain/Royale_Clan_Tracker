@@ -109,10 +109,35 @@ footer {
   color: #ffd15c;
 }
 
+.membersHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
 .subtitle,
 .label {
   color: #bdd1ff;
   margin-top: 4px;
+}
+
+.sortControl {
+  display: grid;
+  gap: 4px;
+  color: #bdd1ff;
+  font-size: 12px;
+}
+
+.sortControl select {
+  width: 100%;
+  min-width: 170px;
+  border: 2px solid #8db7ff;
+  border-radius: 10px;
+  padding: 8px 10px;
+  background: #132657;
+  color: white;
+  font-family: inherit;
 }
 
 .memberList {
@@ -196,6 +221,28 @@ footer {
   background: rgba(19, 38, 87, 0.78);
 }
 
+.memberMeta .activityPill {
+  color: #071127;
+  background: #bdd1ff;
+}
+
+.activityPill.topContributor {
+  background: #ffd15c;
+}
+
+.activityPill.warActive {
+  background: #ff8f8f;
+}
+
+.activityPill.donator {
+  background: #80ffb0;
+}
+
+.activityPill.lowActivity {
+  color: #ffffff;
+  background: #8d4cff;
+}
+
 .clanHeader {
   display: flex;
   justify-content: space-between;
@@ -242,6 +289,107 @@ footer {
   margin-top: 6px;
   color: #ffd15c;
   font-size: clamp(18px, 2vw, 24px);
+}
+
+.warNotice {
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: rgba(255, 209, 92, 0.15);
+  border: 2px solid #ffd15c;
+  border-radius: 14px;
+  color: #fff0bf;
+}
+
+.insightGrid {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.9fr) minmax(300px, 1.1fr);
+  gap: clamp(16px, 2vw, 24px);
+  margin-top: clamp(16px, 2vw, 24px);
+}
+
+.healthPanel,
+.attentionPanel {
+  min-width: 0;
+  padding: 18px;
+  background: #203a80;
+  border: 3px solid #8db7ff;
+  border-radius: 22px;
+}
+
+.panelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.panelHeader h3 {
+  margin: 0;
+}
+
+.panelHeader span {
+  color: #ffd15c;
+  font-size: 12px;
+}
+
+.healthScore {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.healthScore strong {
+  color: #ffd15c;
+  font-size: clamp(34px, 5vw, 52px);
+  line-height: 1;
+}
+
+.healthScore span,
+.healthPanel p {
+  color: #bdd1ff;
+}
+
+.healthPanel p {
+  margin: 8px 0 0;
+}
+
+.healthBreakdown {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.healthBreakdown span {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(19, 38, 87, 0.78);
+  color: #dbe7ff;
+  font-size: 12px;
+}
+
+.attentionList {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.attentionRow {
+  display: grid;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(19, 38, 87, 0.78);
+}
+
+.attentionRow strong {
+  color: #ffffff;
+}
+
+.attentionRow span {
+  color: #bdd1ff;
+  font-size: 12px;
 }
 
 .chartGrid {
@@ -349,6 +497,10 @@ footer {
   .membersCard {
     max-height: 35dvh;
   }
+
+  .insightGrid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 640px) {
@@ -367,6 +519,14 @@ footer {
 
   .summaryGrid {
     grid-template-columns: 1fr;
+  }
+
+  .membersHeader {
+    display: grid;
+  }
+
+  .sortControl select {
+    min-width: 0;
   }
 
   .memberRow {
