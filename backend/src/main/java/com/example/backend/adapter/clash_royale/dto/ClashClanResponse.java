@@ -8,5 +8,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public record ClashClanResponse (
         @JsonProperty("tag") String id,
         String name,
+        String type,
+        int clanScore,
+        int clanWarTrophies,
+        int requiredTrophies,
+        int donationsPerWeek,
         int members
 ) implements GroupDto {}

@@ -20,7 +20,7 @@ public class ClashRoyaleAdapter implements GameAdapter {
     @Override
     public GroupDto getGroup(String groupId) {
         return restClient
-                .get().uri("/clans/{tag}", "#" + groupId)
+                .get().uri("/clans/{tag}", normalizeClanTag(groupId))
                 .retrieve()
                 .body(ClashClanResponse.class);
     }
@@ -28,15 +28,23 @@ public class ClashRoyaleAdapter implements GameAdapter {
     @Override
     public MembersDto getMembers(String groupId) {
         return restClient
-                .get().uri("/clans/{tag}/members", "#" + groupId)
+                .get().uri("/clans/{tag}/members", normalizeClanTag(groupId))
                 .retrieve()
                 .body(ClashClanMembersResponse.class);
     }
 
     public ClashCurrentRiverRaceResponse getCurrentRiverRace(String groupId) {
         return restClient
-                .get().uri("/clans/{tag}/currentriverrace", "#" + groupId)
+                .get().uri("/clans/{tag}/currentriverrace", normalizeClanTag(groupId))
                 .retrieve()
                 .body(ClashCurrentRiverRaceResponse.class);
+    }
+
+    private String normalizeClanTag(String groupId) {
+        String cleaned = groupId.trim().toUpperCase();
+        if (cleaned.startsWith("#")) {
+            cleaned = cleaned.substring(1);
+        }
+        return "#" + cleaned;
     }
 }
