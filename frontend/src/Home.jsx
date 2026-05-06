@@ -10,10 +10,10 @@ import {
   YAxis,
 } from "recharts";
 import AuthPanel from "./AuthPanel.jsx";
+import { APP_API_BASE_URL } from "./apiConfig.js";
 import { useAuth } from "./auth/useAuth.js";
 import "./Home.css";
 
-const APP_API_BASE_URL = "http://localhost:8080/api";
 const API_BASE_URL = `${APP_API_BASE_URL}/games/clash-royale`;
 const NUMBER_FORMAT = new Intl.NumberFormat("en-US");
 const CHART_METRICS = [

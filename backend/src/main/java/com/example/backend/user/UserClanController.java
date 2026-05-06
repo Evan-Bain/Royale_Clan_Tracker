@@ -7,7 +7,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/me")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {
+        "http://localhost:5173",
+        "https://clash-royal-db.web.app",
+        "https://clash-royal-db.firebaseapp.com"
+})
 public class UserClanController {
     private final UserClanService userClanService;
 
