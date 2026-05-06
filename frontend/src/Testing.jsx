@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import { APP_API_BASE_URL } from './apiConfig.js'
 
 export default function Testing() {
     const [members, setMembers] = useState([])
@@ -7,7 +8,7 @@ export default function Testing() {
 
     useEffect(() => {
         axios
-            .get("http://localhost:8080/api/games/clash-royale/group/members", {
+            .get(`${APP_API_BASE_URL}/games/clash-royale/group/members`, {
                 params: { groupId: "R2L0YPGL" }
             })
             .then((res) => {

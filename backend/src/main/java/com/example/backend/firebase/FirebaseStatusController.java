@@ -15,7 +15,11 @@ import java.nio.file.Path;
 
 @RestController
 @RequestMapping("/api/firebase")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {
+        "http://localhost:5173",
+        "https://clash-royal-db.web.app",
+        "https://clash-royal-db.firebaseapp.com"
+})
 public class FirebaseStatusController {
     private final ObjectProvider<FirebaseApp> firebaseAppProvider;
     private final ObjectProvider<Firestore> firestoreProvider;

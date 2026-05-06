@@ -13,7 +13,11 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/games/{gameId}")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {
+        "http://localhost:5173",
+        "https://clash-royal-db.web.app",
+        "https://clash-royal-db.firebaseapp.com"
+})
 public class GameController {
     private final Map<String, GameAdapter> adapters;
     private final RestClient restClient;
