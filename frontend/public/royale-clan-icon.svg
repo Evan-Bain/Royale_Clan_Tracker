@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Royale Clan Tracker">
+  <defs>
+    <linearGradient id="shield" x1="12" x2="52" y1="8" y2="58" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1f55c8" />
+      <stop offset="1" stop-color="#142763" />
+    </linearGradient>
+    <linearGradient id="gold" x1="14" x2="50" y1="14" y2="44" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffe37a" />
+      <stop offset="1" stop-color="#ffaf1f" />
+    </linearGradient>
+  </defs>
+  <path fill="url(#shield)" d="M32 4 56 13v17c0 16-9 25-24 30C17 55 8 46 8 30V13L32 4Z" />
+  <path fill="#8db7ff" d="M32 8 52 15.5V30c0 13-7 21-20 25.5C19 51 12 43 12 30V15.5L32 8Z" opacity=".5" />
+  <path fill="#11245a" d="M17 28h30v16H17z" />
+  <path fill="url(#gold)" d="m14 25 8-10 7 9 5-13 7 13 7-9 8 10-4 17H18l-4-17Z" />
+  <path fill="#fff2a8" d="M22 24h20l2 10H20l2-10Z" opacity=".45" />
+  <circle cx="32" cy="38" r="7" fill="#ffd15c" />
+  <path fill="#142763" d="m32 33 1.6 3.2 3.6.5-2.6 2.5.6 3.5-3.2-1.7-3.2 1.7.6-3.5-2.6-2.5 3.6-.5L32 33Z" />
+</svg>
